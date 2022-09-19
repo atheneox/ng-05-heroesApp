@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Hero } from '../interfaces/hero.interface';
 import { Observable } from 'rxjs';
@@ -31,6 +31,10 @@ export class HeroesService {
 
   updateHero(hero: Hero): Observable<Hero> {
     return this.http.put<Hero>(`${this.baseUrl}/heroes/${hero.id}`, hero);
+  }
+
+  deleteHero(id: string): Observable<any> {
+    return this.http.delete<Hero>(`${this.baseUrl}/heroes/${id}`);
   }
 
 }

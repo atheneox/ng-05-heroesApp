@@ -45,10 +45,23 @@
             <input matInput type="url" [(ngModel)]="hero.alt_img" required>
         </mat-form-field>
         <br>
+
+
+        <!-- <div> -->
         <button mat-raised-button color="primary" (click)="save()">
             <mat-icon>save</mat-icon>
             Save
         </button>
+
+        <!-- <span class="spacer"></span> -->
+        <br>
+
+        <button *ngIf="hero.id" mat-raised-button color="warn" (click)="delete()">
+            <mat-icon>remove</mat-icon>
+            Delete
+        </button>
+        <!-- </div> -->
+
 
     </div>
 

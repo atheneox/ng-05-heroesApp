@@ -58,24 +58,36 @@ export class AddComponent implements OnInit {
 
   }
 
+  //save or update
   save() {
     if (this.hero.superhero.trim().length === 0) { return }
 
+    //update
     if (this.hero.id) {
       this.heroesService
         .updateHero(this.hero)
         .subscribe(r => {
           console.log('heroe actualizado', r);
         });
+      //save
     } else {
-      this.heroesService
-        .addHero(this.hero)
-        .subscribe(hero => {
-          this.router.navigate(['/heroes/edit', hero.id]);
-        });
+      if (this.hero.alt_img) {
+        this.heroesService
+          .addHero(this.hero)
+          .subscribe(hero => {
+            this.router.navigate(['/heroes/edit', hero.id]);
+          });
+      }
     }
 
   }
 
+  delete() {
+    this.heroesService
+    .deleteHero(this.hero.id!)
+    .subscribe(r=>{
+      this.router.navigate(['/heroes/list']);
+    });
+  }
 
 }
