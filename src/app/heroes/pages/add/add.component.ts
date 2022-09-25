@@ -3,6 +3,9 @@ import { Hero, Publisher } from '../../interfaces/hero.interface';
 import { HeroesService } from '../../services/heroes.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmComponent } from '../../components/confirm/confirm.component';
 
 @Component({
   selector: 'app-add',
@@ -41,7 +44,9 @@ export class AddComponent implements OnInit {
   constructor(
     private heroesService: HeroesService,
     private activatedRoute: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private snackBar: MatSnackBar,
+    public dialog: MatDialog
   ) { }
 
   ngOnInit(): void {
@@ -60,6 +65,7 @@ export class AddComponent implements OnInit {
 
   //save or update
   save() {
+
     if (this.hero.superhero.trim().length === 0) { return }
 
     //update
@@ -67,7 +73,7 @@ export class AddComponent implements OnInit {
       this.heroesService
         .updateHero(this.hero)
         .subscribe(r => {
-          console.log('heroe actualizado', r);
+          this.showSnackBar('Registro actualizado!');
         });
       //save
     } else {
@@ -76,6 +82,7 @@ export class AddComponent implements OnInit {
           .addHero(this.hero)
           .subscribe(hero => {
             this.router.navigate(['/heroes/edit', hero.id]);
+            this.showSnackBar('Registro creado!');
           });
       }
     }
@@ -83,11 +90,33 @@ export class AddComponent implements OnInit {
   }
 
   delete() {
-    this.heroesService
-    .deleteHero(this.hero.id!)
-    .subscribe(r=>{
-      this.router.navigate(['/heroes/list']);
-    });
+    const dialog = this.dialog.open(ConfirmComponent, {
+      width: '250px',
+      data: { ...this.hero }
+    })
+
+    //optimizar a switchMap
+    dialog.afterClosed().subscribe(
+      (r) => {
+        if (r) {
+          this.heroesService
+            .deleteHero(this.hero.id!)
+            .subscribe(r => {
+              this.router.navigate(['/heroes/list']);
+            });
+        }
+      }
+    );
+
+
+  }
+
+  showSnackBar(msg: string) {
+
+    this.snackBar.open(msg, 'ok', {
+      duration: 2500
+    })
+
   }
 
 }
